@@ -29,7 +29,7 @@ html_title = "Kubeflow Enterprise Docs"
 
 # material theme options (see theme.conf for more information)
 html_theme_options = {
-#    "site_url": "https://useblocks.com/sphinx-needs-enterprise/",
+    "site_url": "https://elements-of-ai.github.io/kubeflow-docs/",
     "repo_url": "https://github.com/elements-of-ai/kubeflow-docs",
     "repo_name": "Kubeflow Docs",
     "repo_type": "github",
