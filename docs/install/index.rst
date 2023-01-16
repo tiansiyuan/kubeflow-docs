@@ -16,7 +16,13 @@ KFE supports the following Kubernetes versions:
 
       vSphere 8.0
 
-   .. tab:: Ubuntu
+   .. tab:: Alibaba Cloud
 
       Ubuntu 20.04
 
+   .. tab:: Nimbus
+
+      Ubuntu 20.04
+
+.. note::
+   Note that the Kubeflow deployment on Nimbus only works for VMware internal use.

@@ -29,6 +29,7 @@ Docs
     introduction/index
     introduction/oss
     introduction/ekf
+    introduction/mlops
 
 .. toctree::
     :caption: Install
@@ -47,26 +48,37 @@ Docs
     integration/auth
 
 .. toctree::
-    :caption: Features
-    :hidden:
-
-    features/index
-
-.. toctree::
-    :caption: User guide
+    :caption: User Guide
     :hidden:
 
     user-guide/index
-    user-guide/admin
-    user-guide/auth
-    user-guide/kfp
+    user-guide/notebooks
+    user-guide/spark
+    user-guide/mlmd
+    user-guide/mlflow
+    user-guide/training
+    user-guide/tensorboard
+    user-guide/katib
     user-guide/kserve
+    user-guide/kfp
 
 .. toctree::
-    :caption: Operation guide
+    :caption: Use Cases
+    :hidden:
+
+    use-cases/helmet
+
+.. toctree::
+    :caption: Operation Guide
     :hidden:
 
     operation-guide/index
+
+.. toctree::
+    :caption: Internals
+    :hidden:
+
+    internals/auth
 
 License
 -------
