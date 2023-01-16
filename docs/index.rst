@@ -24,14 +24,49 @@ Docs
 ----
 
 .. toctree::
-   :maxdepth: 2
+    :hidden:
 
-   introduction/index
-   install/index
-   integration/index
-   features/index
-   user-guide/index
-   operation-guide/index
+    introduction/index
+    introduction/oss
+    introduction/ekf
+
+.. toctree::
+    :caption: Install
+    :hidden:
+
+    install/index
+    install/ubuntu
+
+.. toctree::
+    :caption: Integration
+    :hidden:
+
+    integration/index
+    integration/gitlab
+    integration/identity
+    integration/auth
+
+.. toctree::
+    :caption: Features
+    :hidden:
+
+    features/index
+
+.. toctree::
+    :caption: User guide
+    :hidden:
+
+    user-guide/index
+    user-guide/admin
+    user-guide/auth
+    user-guide/kfp
+    user-guide/kserve
+
+.. toctree::
+    :caption: Operation guide
+    :hidden:
+
+    operation-guide/index
 
 License
 -------

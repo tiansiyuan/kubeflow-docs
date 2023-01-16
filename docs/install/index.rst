@@ -1,6 +1,6 @@
-=======
-Install
-=======
+========
+Overview
+========
 
 This guide describes how to install and expose Kubeflow Enterprise (KFE) on a Kubernetes cluster from scratch. Throughout the guide we provide the necessary steps in an easy to copy and paste manner.
 
@@ -19,3 +19,4 @@ KFE supports the following Kubernetes versions:
    .. tab:: Ubuntu
 
       Ubuntu 20.04
+
