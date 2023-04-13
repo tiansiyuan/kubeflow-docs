@@ -60,6 +60,7 @@ This documentation presents a comprehensive end-to-end workflow of using vSphere
 
     use-cases/index
     use-cases/helmet
+    use-cases/modelserving
 
 .. toctree::
     :caption: Internals
