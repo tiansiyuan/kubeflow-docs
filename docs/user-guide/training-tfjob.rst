@@ -75,7 +75,7 @@ You can deploy the TFJob resource with **CPU** to start training:
           spec:
             containers:
               - name: tensorflow
-                image: gcr.io/kubeflow-ci/tf-mnist-with-summaries:1.0
+                image: projects.registry.vmware.com/models/kubeflow-docs/model-training-tf-mnist-with-summaries:1.0
                 command:
                   - "python"
                   - "/var/tf_mnist/mnist_with_summaries.py"

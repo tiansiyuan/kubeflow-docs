@@ -108,7 +108,7 @@ You just choose one of the below YAML file to apply according to your environmen
                   - name: data
                     mountPath: "/opt/pytorch/output"
                 name: pytorch
-                image: harbor-repo.vmware.com/kubeflow_learning/lab3-pytorch-training:dlc-0.0.1
+                image: projects.registry.vmware.com/models/kubeflow-docs/model-training-pytorch:1.11.0-cpu-py3.8-v0.1
                 imagePullPolicy: IfNotPresent
       Worker:
         replicas: 2
@@ -120,7 +120,7 @@ You just choose one of the below YAML file to apply according to your environmen
           spec:
             containers: 
               - name: pytorch
-                image: harbor-repo.vmware.com/kubeflow_learning/lab3-pytorch-training:dlc-0.0.1
+                image: projects.registry.vmware.com/models/kubeflow-docs/model-training-pytorch:1.11.0-cpu-py3.8-v0.1
                 imagePullPolicy: IfNotPresent
     EOF
 
@@ -152,7 +152,7 @@ You just choose one of the below YAML file to apply according to your environmen
                 - name: data
                   mountPath: "/opt/pytorch/output"
                 name: pytorch
-                image: projects.registry.vmware.com/kubeflow/lab3_pytorch_training:0.1
+                image: projects.registry.vmware.com/models/kubeflow-docs/model-training-pytorch:1.11.0-gpu-cu11.6-py3.8-v0.1
                 args: ["--backend", "nccl"]
                 imagePullPolicy: IfNotPresent
                 resources: 
@@ -168,7 +168,7 @@ You just choose one of the below YAML file to apply according to your environmen
           spec:
             containers: 
               - name: pytorch
-                image: projects.registry.vmware.com/kubeflow/lab3_pytorch_training:0.1
+                image: projects.registry.vmware.com/models/kubeflow-docs/model-training-pytorch:1.11.0-gpu-cu11.6-py3.8-v0.1
                 args: ["--backend", "nccl"]
                 imagePullPolicy: IfNotPresent
                 resources: 
