@@ -22,7 +22,7 @@ Update Dex's configmap
 
 Dex use a configmap for its configuration.
 
-You need to edit `Dex's configmap  <https://github.com/kubeflow/manifests/blob/master/common/dex/base/config-map.yaml>`__ to add `LDAP connector configurations <https://dexidp.io/docs/connectors/ldap/>`__.
+You need to edit `Dex's configmap  <https://github.com/vmware/ml-ops-platform-for-vsphere/blob/main/manifests/common/dex/base/config-map.yaml>`__ to change the ``issuer`` to {public_ip}/dex and add LDAP connector.
 
 .. code-block:: shell
 
@@ -30,7 +30,9 @@ You need to edit `Dex's configmap  <https://github.com/kubeflow/manifests/blob/m
 
 .. code-block:: shell
 
-  issuer: http://dex.auth.svc.cluster.local:5556/dex
+  # Change the issuer to {public_ip}/dex
+  # issuer: http://dex.auth.svc.cluster.local:5556/dex
+  issuer: http://10.105.150.43/dex
 
   # --     some configurations we don't care    -- #
   # --     some configurations we don't care    -- #
@@ -67,6 +69,26 @@ You need to edit `Dex's configmap  <https://github.com/kubeflow/manifests/blob/m
         nameAttr: cn  
 
 
+Edit the dex's configmap to add a LDAP connector for our Kubeflow AuthService.
+
+* issuer: Change the issuer to {public_ip}/dex.
+
+For the LDAP connector, you will need to finished the `LDAP connector configurations <https://dexidp.io/docs/connectors/ldap/>`__.
+
+"""""""""""""""""""""""""""""""""""
+Update oidc-authservice's configmap
+"""""""""""""""""""""""""""""""""""
+
+You need to edit `oidc-authservice's configmap  <https://github.com/vmware/ml-ops-platform-for-vsphere/blob/main/manifests/common/oidc-authservice/base/params.env>`__ change the ``OIDC_PROVIDER`` to {public_ip}/dex.
+
+.. code-block:: shell
+
+    kubectl edit configmap oidc-authservice-parameters -n istio-system
+
+    # Change the OIDC_PROVIDER to {public_ip}/dex
+    OIDC_PROVIDER: http://10.105.150.43/dex
+
+
 """""""""""""""""""""""""""""""""""""""""""
 Update configmap and Restart dex deployment
 """""""""""""""""""""""""""""""""""""""""""
@@ -75,7 +97,7 @@ Update configmap and Restart dex deployment
 
     # run the following two lines to update dex config with the user you add
     kubectl get configmap dex -n auth -o yaml | kubectl replace -f -
-
+    kubectl get configmap oidc-authservice-parameters -n istio-system -o yaml | kubectl replace -f -
     # restart dex deployment to make the new configuration work
     kubectl rollout restart deployment dex -n auth
 
@@ -87,11 +109,9 @@ Enable Enable automatic profile creation
 Update centraldashboard's configmap
 """""""""""""""""""""""""""""""""""
 
-Kubeflow v1.7.0 provides automatic profile creation, but if you kubeflow version is v1.6.1 or before, please refer to `getting Started with Multi-user Isolation <https://www.kubeflow.org/docs/components/multi-tenancy/getting-started/>`__
+The automatic profile creation can be enabled as part of the deployment by setting the ``CD_REGISTRATION_FLOW`` env variable to true. Modify the ``<manifests-path>/apps/centraldashboard/upstream/base/params.env`` to set the registration variable to ``true``.
 
-The automatic profile creation can be enabled as part of the deployment by setting the ``CD_REGISTRATION_FLOW`` env variable to true. Modify the ``<manifests-path>/apps/centraldashboard/upstream/base/params.env`` to set the registration variable to ``true``. 
-
-You need to edit  `centraldashboard's configmap <https://github.com/kubeflow/manifests/blob/master/apps/centraldashboard/upstream/base/params.env>`_ change the ``CD_REGISTRATION_FLOW`` to ``true``.
+You need to edit  `centraldashboard's configmap <https://github.com/vmware/ml-ops-platform-for-vsphere/blob/main/manifests/apps/centraldashboard/upstream/base/params.env>`_ change the ``CD_REGISTRATION_FLOW`` to ``true``.
 
 .. code-block:: shell
 
@@ -132,37 +152,11 @@ A brief message introduces profiles,  and the user can name their profile and cl
 .. image:: ../_static/operation-guide-auth-ldap-login-namespace02.png
 
 -------------------------------------------------------
-Configure pod-security-policy for your own user profile
+Configure pod security policy for your own user profile
 -------------------------------------------------------
 
-Check your own user profile
-
-.. code-block:: shell
-
-    kubectl get profile
-    kubectl get serviceaccount,authorizationpolicies,rolebinding -n <namespace_name>
-
-Configure pod-security-policy tp give you access create pod in TKG. Or you will create Notebook pod: fail, and get warning  "FailedCreate  1s (x2 over 1s)     statefulset-controller  create Pod test-01-0 in StatefulSet test-01 failed error: pods "test-01-0" is forbidden: PodSecurityPolicy: unable to admit pod: []"
-
-.. code-block:: shell
-
-  cat << EOF | kubectl apply -f -
-  kind: RoleBinding
-  apiVersion: rbac.authorization.k8s.io/v1
-  metadata:
-    name: rb-all-sa_ns-<namespace_name>
-    namespace: <namespace_name>
-  roleRef:
-    kind: ClusterRole
-    name: psp:vmware-system-privileged
-    apiGroup: rbac.authorization.k8s.io
-  subjects:
-  - kind: Group
-    apiGroup: rbac.authorization.k8s.io
-    name: system:serviceaccounts:<namespace_name>
-  EOF
-
-Now you can use your own user profile to run your applications!
+Before starting to use Kubeflow, remember to configure the pod security policy for your own user profile in order to create pods. This is important as pod creation is needed for many Kubeflow functions, such as Notebook Server creation. 
+Refer to :ref:`configure pod security policy` for more details and instructions.
 
 ---------------
 Troubleshooting
@@ -173,7 +167,7 @@ Restrict specific LDAP users to login Kubeflow
 """"""""""""""""""""""""""""""""""""""""""""""
 
 Most of the time, we hope to specified LDAP users can login Kubeflow, not all LDAP users. Thus we need to add more filter restrictions when searching the directory. 
-As follow example, we only allow user1 and user2 these 2 users to login Kubeflow. Please restart dex deployment to make the new configuration work.
+As follow example, we only allow liuqi and juanl these 2 users to login Kubeflow. 
 
 .. code-block:: shell
 
@@ -184,3 +178,15 @@ As follow example, we only allow user1 and user2 these 2 users to login Kubeflow
         baseDN: ou=people,dc=vmware,dc=com
         filter: "(objectclass=inetOrgPerson)(|(uid=user1)(uid=user2))"
         ...
+
+""""""""""""""""""""
+Pod creation failure
+""""""""""""""""""""
+
+You may meet following error in some operation:
+
+.. code-block:: text
+
+    FailedCreate 1s (x2 over 1s) statefulset-controller create Pod test-01-0 in StatefulSet test-01 failed error: pods “test-01-0” is forbidden: PodSecurityPolicy: unable to admit pod: []
+
+This error occurs because you did not configure your pod security policy correctly. To solve this problem, you need to configure pod security policy based on :ref:`configure pod security policy`.
