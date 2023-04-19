@@ -9,7 +9,7 @@ Model Training
 --------------
 
 Data Processing
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^
 
 Data Exploration
 """"""""""""""""
@@ -106,6 +106,6 @@ Once the model is selected from the validation where the metrics are met, we can
 production environment. This trained and then deployed model acts as a service that can handle prediction 
 requests. 
 
-Kubeflow simplifies the model deployment by dealing the given model‘s different model format using **Seldon Core**, **TFServe** and **KFServe**. The model-as-data methodology is used by these implementations to leverage an intermediate model format and Kubeflow allows the swapping between model frameworks as smoothly as possible.
+Kubeflow simplifies the model deployment by dealing the given model‘s different model format using **Seldon Core**, **TFServe** and **KFServe**. The model-as-data methodology is used by these implementations to leverage an intermediate model format and Kubeflow allows the swapping between model frameworks as smoothly as possible. With Kubeflow the user can train the model using PyTorch or TensorFlow then when the model is served at the production, the underlying serving remains consistent with the user's API. Furthermore the hardware serving the model can be optimized for better performance than the hardware used during the model building phase.
 
 Kubeflow also handles the infrastructure complexities such as modeling monitoring, scaling, revisioning during the model serving. The hosted models could be updated with newer version to fit the current dataset better and therefore increase the performance metrics. They can be rollback to previous version if certain problems are encountered after deployment. These kinds of model management can be handled smoothly and automatically with Kubeflow without much of the human involvement.

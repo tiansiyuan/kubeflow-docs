@@ -31,7 +31,7 @@ can help you answer questions about your ML pipeline such as:
 * Which training run led to this model?
 * When was the failed model pushed?
 
-Below graphic shows a high-level overview of the various components that are part of MLMD.
+Below diagram shows a high-level overview of the various components of MLMD.
 
     .. image:: ../_static/user-guide-mlmd-overview.png
 
@@ -162,9 +162,7 @@ there are three general options.
 Integrate MLMD with ML Workflow
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In this guide, we will introduce you to some basic concepts and understandings of MLMD usage by going through an example. We here 
-provide you with a typical ML workflow and and will show you how to use the low-level MLMD APIs to track the execution of a training 
-task.
+In this guide, we will introduce you to some basic concepts and understandings of MLMD usage by going through an example. We adopt a typical ML workflow to show you how to use the low-level MLMD APIs to track the execution of a training task.
 
 The following graph shows the **overall workflow**.
 
@@ -199,11 +197,11 @@ To **summarize**,
 * A ``Context`` (an experiment) generats an ``Artifact`` (a model) and they are bonded together by an ``Attribution``.
 
 The exmaple we would guide you through simply represents a workflow that uses a *dataset* (``Artifact``) to *train* (``Execution``) a 
-*model* (``Artifact``). And we would walk you through the code implementation step by step, based on the graph above.
+*model* (``Artifact``). We would walk you through the code implementation step by step, based on the graph above.
 
 **1. Register artifact types**
 
-  We start from registering artifact types. You may see from the graph above, we have two ``Artifact``, and 
+  We start with registering artifact types. You may see from the graph above, we have two ``Artifact``, and 
   therefore need to register two ``ArtifactType``.
 
   To Register ``ArtifactType`` for dataset:
@@ -337,7 +335,7 @@ The exmaple we would guide you through simply represents a workflow that uses a 
       last_update_time_since_epoch: 1675758739631
       ]
 
-  Plus, there are many ways to query the same ``Artifact``:
+  By the way there are many ways to query the same ``Artifact``:
 
   .. code-block:: python
 
@@ -430,7 +428,7 @@ The exmaple we would guide you through simply represents a workflow that uses a 
 
 **6. Train model and create saved model artifact**
 
-  Next, we declare the output ``Artifact``, which is the saved model, using the ``SavedModel`` artifact type we created in previously.
+  Next, we declare the output ``Artifact``, which is the saved model, using the ``SavedModel`` artifact type we created previously.
 
   .. code-block:: python
 
