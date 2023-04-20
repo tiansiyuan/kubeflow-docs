@@ -2,9 +2,9 @@
 Kubeflow Pipelines with MLFlow and Katib
 ========================================
 
---------
-Overview
---------
+------------
+Introduction
+------------
 
 This guide intended to introduce end users to complete ML workflow using Kubeflow. In particular, examples of Kubeflow Pipelines 
 using Katib hyperparameter tuning and MLFlow model registry are presented along with some common pipeline steps and interfaces such 
@@ -24,30 +24,26 @@ The following diagram outlines ML workflow presented in this guide. Major pipeli
 * Train model using best parameters from tuning stage.
 * Store the production model to MLFlow model registry.
 
-
     .. image:: ../_static/user-guide-kfp-mlflow-katib-overview.png
 
 -------------
 Prerequisites
 -------------
 
-* Deployed MLFlow. For deployment of Charmed MLFlow refer to :ref:`user-guide-mlflow`.
-* Familiarity with Python, Docker, Jupyter notebooks.
+* Deployed MLFlow. For deployment of MLFlow, refer to :ref:`user-guide-mlflow`.
+* Familiarity with `Python <https://docs.python.org/3/tutorial/>`__, `Docker <https://docs.docker.com/>`__, `Jupyter notebooks <https://jupyter-notebook.readthedocs.io/en/stable/>`__.
 
-------------
-Instructions
-------------
-
-The following are the instructions that outline the workflow process.
+-----------
+Get started
+-----------
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Create notebook server and Jupyter notebook
+Create Notebook Server and Jupyter notebook
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Access Kubeflow dashboard via URL. For example http://10.64.140.43.nip.io/.
-
-Navigate to "Notebooks". Fill in a name. Select Tensorflow image ``jupyter-tensorflow-full:v1.6.1``. And select minimum 
-configuration: 1 CPU and 4GB of RAM. Also, remember to enable "mlflow-server-minio" option in the configuration section.
+Access Kubeflow dashboard, and navigate to "Notebooks". Fill in a name. Select Tensorflow image ``jupyter-tensorflow-full:v1.6.1``. 
+And select minimum configuration: 1 CPU and 4GB of RAM. Also, remember to enable "mlflow-server-minio" option in the configuration 
+section.
 
     .. image:: ../_static/user-guide-kfp-mlflow-katib-newNotebook.png
     
@@ -55,13 +51,13 @@ configuration: 1 CPU and 4GB of RAM. Also, remember to enable "mlflow-server-min
 
     .. image:: ../_static/user-guide-kfp-mlflow-katib-createNotebook2.png
 
-Connect to the newly created notebook. And create a Jupyter notebook to hold code that will specify the Kubeflow pipeline.
+Connect to the newly created notebook. And create a Jupyter notebook to hold codes that will specify the Kubeflow pipeline.
 
     .. image:: ../_static/user-guide-kfp-mlflow-katib-connect.png
 
-^^^^^^^^^^^^^^^
-Define pipeline
-^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^
+Define pipeline steps
+^^^^^^^^^^^^^^^^^^^^^
 
 """"""""""""""""""
 Setup environment
@@ -92,9 +88,9 @@ To setup environment, add the following cells to the newly created Jupyter noteb
     from kubeflow.katib import V1beta1TrialTemplate
     from kubeflow.katib import V1beta1TrialParameterSpec
 
-""""""""""""""""""""""""""""""""""""""""""""""""""
-Create data ingestion and clean up pipeline steps
-""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""
+Create data ingestion and cleanup steps
+"""""""""""""""""""""""""""""""""""""""
 
 Create pipeline steps that will do data ingestion and cleanup. Setup transfer of clean data to the next step using S3 bucket.
 
@@ -188,9 +184,9 @@ Define data cleanup operation based on data clean up function.
             packages_to_install=["pandas==1.2.4", "scipy==1.7.0", "boto3"],
     )
 
-""""""""""""""""""""""""""""""""""""""""""
-Create hyperparameter tuning pipeline step
-""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""
+Create hyperparameter-tuning step
+"""""""""""""""""""""""""""""""""
 
 Create the next pipeline step that will do hyperparameter tuning using Katib and a training container image 
 ``docker.io/misohu/kubeflow-training:latest``.
@@ -337,9 +333,9 @@ Define Katib convert results operation.
     # Katib convert results operation.
     convert_katib_results_op = components.func_to_container_op(convert_katib_results)
 
-""""""""""""""""""""""""""""""""""""
-Create model training pipeline step
-""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""
+Create model training step
+""""""""""""""""""""""""""
 
 Create the last step of the pipeline that will do model training using Tensorflow based on Katib tuning results.
 
@@ -431,9 +427,9 @@ Create the last step of the pipeline that will do model training using Tensorflo
             delete_finished_tfjob=False)
         return op
 
-""""""""""""""""""""""""""""""""""""""
-Create timestamp helper pipeline step
-""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""
+Create timestamp helper step
+""""""""""""""""""""""""""""
 
 Define a helper that generates timestamps in a Kubeflow Pipeline step. It will be needed to generate unique names for some of 
 pipeline steps.
@@ -446,11 +442,11 @@ pipeline steps.
 
     compute_timestamp_op = components.func_to_container_op(compute_timestamp)
 
-""""""""""""""""""""""""
-Define complete pipeline
-""""""""""""""""""""""""
+^^^^^^^^^^^^^^^
+Create pipeline
+^^^^^^^^^^^^^^^
 
-Define a complete pipeline that consists of all steps created earlier. Note that the name of the pipeline must be unique. If there 
+Define and create the complete pipeline that consists of all steps created earlier. Note that the name of the pipeline must be unique. If there 
 was previously defined pipeline with the same name and within the same namespace, either change the name of current pipeline or 
 delete the older pipeline from the namespace.
 
@@ -585,7 +581,7 @@ When the experiment finishes, you should also be able to see the optimal value o
 MLFlow
 """"""""
 
-Verify that model is stored in MLFlow model registry by navigating to MLFlow dashboard, eg. http://10.64.140.43.nip.io/mlflow/#/.
+Verify that model is stored in MLFlow model registry by navigating to MLFlow dashboard.
 
 Click on "Models" on the top toolbar, and you should then see the model we just created and stored.
 
@@ -595,6 +591,3 @@ Click on "Models" on the top toolbar, and you should then see the model we just 
     If you have any trouble with accessing MLFlow, refer to :ref:`user-guide-mlflow`.
 
 Now your model is ready to be deployed!
-
-.. seealso::
-    `Kubeflow with Katib and MLFlow <https://charmed-kubeflow.io/docs/ml-workflow-kubeflow-with-katib-and-mlflow>`__
