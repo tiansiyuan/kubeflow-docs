@@ -2,21 +2,26 @@
 Kubeflow Pipelines with MLFlow and Seldon Core
 ==============================================
 
+Introduction
+============
+
 In this document we show you how to build your own advanced MLOps pipeline using Kubeflow Pipelines (KFP), MLFlow and Seldon Core and get them to work seamlessly together in order to deliver your model to production in a scalable, efficient manner.
 
 For wine lovers, we use a wine dataset. We want to predict the wine’s quality based on a chemical analysis. The higher the quality score, the better the wine is going to taste.
 
+Get started
+===========
 
 Set up your environment
-=======================
+-----------------------
 
-Grab the `code samples <https://github.com/Barteus/kubeflow-examples/tree/0.2/e2e-wine-kfp-mlflow>`_ and let’s execute them together in order to get the most out of this document. You’ll need a working Kubeflow deployment with MLFLow up and running.
+Grab the `code samples <https://github.com/Barteus/kubeflow-examples/tree/0.2/e2e-wine-kfp-mlflow>`__ and let’s execute them together in order to get the most out of this document. You’ll need a working Kubeflow deployment with MLFLow up and running.
 
 During the journey through the pipeline, each step will show us something new. Let’s go!
 
 
 Add privilege to access MinIO for MLFlow
-========================================
+----------------------------------------
 
 Sometimes there is missing pod-defaults for the user's namespace. Please check if there is pod-defaults on the user's namespace.
 
@@ -82,7 +87,7 @@ If there is no pod-defaults for the user's namespace, run the following command 
 
 
 Load the data
-=============
+-------------
 
 The first step is one of the most frequently performed actions. We want to download the source data and put it in object storage. We can copy some of our old code from the past, but do we have to? Let’s check if we can find this component in the `Kubeflow Pipelines components directory <https://github.com/kubeflow/pipelines/tree/master/components>`_.
 
@@ -99,7 +104,7 @@ Just like that, we developed our first step!
 
 
 Preprocess our ML source data
-=============================
+-----------------------------
 
 For the preprocessing step we need a different approach. Each data preprocessing step is different, so we likely won’t find what we need in the KFP components registry. During the experiment phase, preprocessing is usually done in a jupyter notebook. So we will wrap this code into a Python function so that we can convert it into a component. It’s important to notice that pandas import is inside the Python function because the library needs to be imported inside the Docker container that will eventually be running the step.
 
@@ -126,7 +131,7 @@ This method allows us to quickly build a pipeline in a way that does not require
 
 
 Train our ML predictive model
-=============================
+-----------------------------
 
 This preprocessing step is created using a function-based component too. The difference in this step is that we need to make calls to MLFlow and Minio – and these calls require setting some environment variables. How to securely handle setting up the environment variables is something we will discuss later in this document. Additionally, we’ll change the training code, so that all of the information about the experiment will be saved in MLFLow and the ML model artefact that this step generates will be stored in Minio.
 
@@ -166,6 +171,7 @@ The training container was created based on the same Python 3.9 image as the pre
 
 
 Deploy our ML model
+^^^^^^^^^^^^^^^^^^^
 
 We’ll create the inference server deployment that’ll host our ML model using a Docker container-based, microservices approach. The code for this step is not in the experiment notebook. We’re going to use Seldon Core for deployment together with MLFLow Server so that we can take full advantage of features like monitoring our deployment without needing to build a dedicated Docker image. The model artefact will be downloaded by the Seldon Core deployment from our Minio object storage system. In this step, we’ll need to use kubectl to apply our SeldonDeployment configuration. The URI containing the path to the ML model is externally provided to the training step.
 
@@ -177,7 +183,7 @@ Developing the deployment step is split into a few parts:
    * create the step from the component configuration file
 
 Create the command-line application
------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 First, we create a command-line application, which calls “kubectl” with a file generated from a Jinja template as a parameter.
 
@@ -204,7 +210,7 @@ First, we create a command-line application, which calls “kubectl” with a fi
 
 
 Build and push the Docker image
--------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Next, we use Docker to build and push an image to the Docker image registry. The Dockerfile can be found here and the build script is below.
 
@@ -219,7 +225,7 @@ Next, we use Docker to build and push an image to the Docker image registry. The
 
 
 Create a component configuration file
--------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Thirdly, we will create a Kubeflow pipeline step configuration file using the output from docker inspect. This configuration file is crucial in order to be able to share your Kubeflow pipeline step with other teams.
 
@@ -241,7 +247,7 @@ Thirdly, we will create a Kubeflow pipeline step configuration file using the ou
 
 
 Load our component
-------------------
+^^^^^^^^^^^^^^^^^^
 
 Finally, we’ll load the components in a similar way to the “Download data” step. We use the configuration file we created in the third step to specify which Docker image is used, how it is to be invoked and what the input and output parameters are.
 
@@ -256,7 +262,7 @@ If you don’t want to build your own Docker image, feel free to use the one we�
 
 
 Put the MLOps pipeline together
-===============================
+-------------------------------
 
 We’ve defined all the components – now let’s create a pipeline from them. We need to put them in the proper order, define inputs and outputs and add appropriate configuration values.
 
@@ -287,7 +293,8 @@ Now, the coding part is completed. All that’s left is to see the results of ou
 
 
 Check the Inference endpoint
-============================
+----------------------------
+
 We want to be 100% sure it works – so let’s check if the inference endpoint is responding correctly. First, go to the Kubernetes cluster and port-forward or expose the newly created service. 
 
 .. code-block:: shell
@@ -337,38 +344,35 @@ Sometimes hostname will be combined with a domain name on this machine to form a
 To solved this, just add ‘.’ after domain name to prevent coredns from using URLs as hostnames, such as 'raw.githubusercontent.com.'
 
 
-MLModel file saved with mlflow=2 in mlflowserver can't compatible with seldonio/mlflowserver:1.14.0-dev
--------------------------------------------------------------------------------------------------------
+ML Model file is not compatible with ``seldonio/mlflowserver:1.14.0-dev``
+-------------------------------------------------------------------------
 
-The error shows conda_env_create.py TypeError: join() argument must be str or bytes, not 'dict'. And this issue has fixed  on `this link <https://github.com/SeldonIO/seldon-core/pull/4505>`_. But there is no update conda_env_create.py code for seldonio/mlflowserver:1.14.0-dev Docker image.
+ML Model file saved with ``mlflow=2`` in ``mlflowserver`` is not compatible with ``seldonio/mlflowserver:1.14.0-dev``. The error shows 
+``conda_env_create.py TypeError: join()`` argument must be ``str`` or ``bytes``, not ``dict``. And this issue has fixed  on `this link <https://github.com/SeldonIO/seldon-core/pull/4505>`_. But there is no update conda_env_create.py code for seldonio/mlflowserver:1.14.0-dev Docker image.
 
 Choose one of the below of solutions to solve this error.
 
-Solution 1: Update the latest `conda_env_create.py <https://github.com/SeldonIO/seldon-core/blob/master/servers/mlflowserver/mlflowserver/conda_env_create.py>`_ into seldonio/mlflowserver:1.14.0-dev Docker image and commit the new Docker image to use.
+- Solution 1: Update the latest `conda_env_create.py <https://github.com/SeldonIO/seldon-core/blob/master/servers/mlflowserver/mlflowserver/conda_env_create.py>`_ into seldonio/mlflowserver:1.14.0-dev Docker image and commit the new Docker image to use.
 
-Solution 2: Modify MLmodel file
+- Solution 2: Modify MLmodel file
 
-.. code-block:: shell
+  .. code-block:: shell
 
-   # MLModel saved with mlflow=1
-   artifact_path: model
-   flavors:
-   python_function:
-      env: conda.yaml
-      loader_module: mlflow.sklearn
-      model_path: model.pkl
-      predict_fn: predict
-      python_version: 3.9.16
-   sklearn:
-      code: null
-      pickled_model: model.pkl
-      serialization_format: cloudpickle
-      sklearn_version: 1.2.1
-   mlflow_version: 2.1.1
-   model_uuid: 9971f5db741348cda16bfb3fc4cfff18
-   run_id: 4a02ebc811b84e1194b452b38c2d96d8
-   utc_time_created: '2023-02-01 08:13:32.310337'
-
-
-.. seealso::
-   `How to build an MLOps pipeline with MLFlow and Seldon Core <https://charmed-kubeflow.io/docs/build-an-mlops-pipeline-with-mlflow-seldon-core-and-kubeflow>`_
+     # MLModel saved with mlflow=1
+     artifact_path: model
+     flavors:
+     python_function:
+        env: conda.yaml
+        loader_module: mlflow.sklearn
+        model_path: model.pkl
+        predict_fn: predict
+        python_version: 3.9.16
+     sklearn:
+        code: null
+        pickled_model: model.pkl
+        serialization_format: cloudpickle
+        sklearn_version: 1.2.1
+     mlflow_version: 2.1.1
+     model_uuid: 9971f5db741348cda16bfb3fc4cfff18
+     run_id: 4a02ebc811b84e1194b452b38c2d96d8
+     utc_time_created: '2023-02-01 08:13:32.310337'
