@@ -9,7 +9,7 @@ Goal
 The goal of Kubeflow integrate with VMware LDAP Server is that we can login Kubeflow using VMware employee LDAP account. As follow screenshots, choose 'Log in with OpenLDAP', input your VMware account, then you can log in Kubeflow successfully. When you log in Kubeflow, Kubeflow will create your own user profile automatically.
 
 .. image:: ../_static/operation-guide-auth-ldap-goal01.png
-.. image:: ../_static/operation-guide-auth-ldap-goal02.png
+.. image:: ../_static/operation-guide-auth-ldap-goal02.jpeg
 .. image:: ../_static/operation-guide-auth-ldap-goal03.png
 
 -------------------------
@@ -54,14 +54,14 @@ You need to edit `Dex's configmap  <https://github.com/vmware/ml-ops-platform-fo
     config:
       # Host and optional port of the VMware LDAP server in the form "host:port".
       # More detailes here: https://dexidp.io/docs/connectors/ldap/
-      host: ldaps.eng.vmware.com:636
+      host: ldap.example.com:636
       insecureNoSSL: false
       insecureSkipVerify: true
       bindDN: ""
       bindPW: ""
       usernamePrompt: SSO Username
       userSearch:
-        baseDN: ou=people,dc=vmware,dc=com
+        baseDN: ou=people,dc=example,dc=com
         filter: "(objectclass=inetOrgPerson)"
         username: uid
         idAttr: DN
