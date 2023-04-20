@@ -2,8 +2,8 @@
 Model Serving
 =============
 
-Overview
-========
+Introduction
+============
 
 KServe is a standard Model Inference Platform on Kubernetes, built for highly scalable use cases. It provides performant, standardized inference protocol across ML frameworks and support modern serverless inference workload with Autoscaling including Scale to Zero on GPU.
 
@@ -18,15 +18,8 @@ You can use KServe to do the following:
 Please browse the `KServe GitHub repo <https://github.com/KServe/KServe>`__ to know more details!
 
 
-Prerequisites
-=============
-
-* Deployed Kubeflow instance including KServe, and access to Kubeflow dashboard. Please refer to :ref:`install-tkgs`.
-* Familiarity with Python, Jupyter notebooks.
-
-
-Getting started with KServe
-===========================
+Get started
+=========== 
 
 In this tutorial, you will deploy an InferenceService with a predictor that will load a spam email detection model trained with custom dataset. We have prepared the files needed to deploy the model through KServe before experiment, including model file, configuration file. This preparation work is complicated and lengthy, so we will not elaborate here. If you want to know more details, for example, how to prepare the model files, please see the `KServe example tutorial <https://github.com/vmware/ml-ops-platform-for-vsphere/blob/main/website/content/en/docs/kubeflow-tutorial/lab4.ipynb>`__.
 
@@ -46,7 +39,7 @@ First, you can create a notebook refer to :ref:`user-guide-notebooks`. Then, dow
 Upload to MinIO
 ---------------
 
-If you already have the MinIO storage, you can directly follow the next steps to upload model file to MinIO. If not, we also provide a standalone MinIO deployment guide on the kubernetes clusters. You can use these `MinIO deployment files <https://github.com/vmware/ml-ops-platform-for-vsphere/tree/main/website/content/en/docs/kubeflow-tutorial/lab4_minio_deploy>`_ and apply them in your terminal.
+If you already have the MinIO storage, you can directly skip the MinIO deployment step, and follow the next steps to upload data to MinIO. If not, we also provide a standalone MinIO deployment guide on the kubernetes clusters, you can refer to the `upload data to MinIO bucket` section in the :ref:`feature_store` doc. And the YAML files are the same with `MinIO deployment files <https://github.com/vmware/ml-ops-platform-for-vsphere/tree/main/website/content/en/docs/kubeflow-tutorial/lab4_minio_deploy>`__.
 
 .. code-block:: shell
     
