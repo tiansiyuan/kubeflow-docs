@@ -4,18 +4,18 @@
 Monitoring with Prometheus and Grafana 
 ======================================
 
-This document will explain how to provides cluster monitoring services by implementing the open source Prometheus and Grafana projects.
+This section explains how to use Prometheus and Grafana to monitor the Tanzu Kubernetes Grid (TKG) cluster in which vSphere Enterprise Kubeflow runs. 
 
 Prerequisites
 =============
 
-- A bootstrap machine with the following installed: kubectl and helm.
+- A bootstrap machine with the following commands installed: ``kubectl`` and ``helm``.
 
-- A Tanzu Kubernetes Grid cluster running on vSphere, with the package repository installed. For information about deploying, see `vSphere with Tanzu Configuration and Management <https://docs.vmware.com/en/VMware-vSphere/7.0/vmware-vsphere-with-tanzu/GUID-152BE7D2-E227-4DAA-B527-557B564D9718.html>`__.
+- A TKG cluster running on vSphere, with the package repository installed. For information about deploying, see `vSphere with Tanzu Configuration and Management <https://docs.vmware.com/en/VMware-vSphere/7.0/vmware-vsphere-with-tanzu/GUID-152BE7D2-E227-4DAA-B527-557B564D9718.html>`__.
 
-- Connect to the cluster from your client host. See `Connect to a Tanzu Kubernetes Cluster as a vCenter Single Sign-On User <https://docs.vmware.com/en/VMware-vSphere/7.0/vmware-vsphere-with-tanzu/GUID-AA3CA6DC-D4EE-47C3-94D9-53D680E43B60.html>`__
+- Connect to the cluster from your client host. See `Connect to a Tanzu Kubernetes Cluster as a vCenter Single Sign-On User <https://docs.vmware.com/en/VMware-vSphere/7.0/vmware-vsphere-with-tanzu/GUID-AA3CA6DC-D4EE-47C3-94D9-53D680E43B60.html>`__.
 
-- We will be utilizing and monitoring GPU resources on vSphere platform, setup vGPU TKG with document `Deploy AI/ML Workloads on Tanzu Kubernetes Clusters <https://docs.vmware.com/en/VMware-vSphere/7.0/vmware-vsphere-with-tanzu/GUID-2B4CAE86-BAF4-4411-ABB1-D5F2E9EF0A3D.html>`__.
+- Utilize and monitor GPU resources on vSphere, setup vGPU TKG following instructions in `Deploy AI/ML Workloads on Tanzu Kubernetes Clusters <https://docs.vmware.com/en/VMware-vSphere/7.0/vmware-vsphere-with-tanzu/GUID-2B4CAE86-BAF4-4411-ABB1-D5F2E9EF0A3D.html>`__.
 
 Monitor with Prometheus and Grafana
 ===================================
@@ -26,34 +26,34 @@ Deploy Prometheus Operator and Grafana
 Set up Prometheus
 """""""""""""""""
 
-Deploying a Prometheus stack may seem like a complex undertaking, but leveraging the Helm package manager, 
+Deploying a Prometheus stack may seem a complex task, but leveraging the Helm package manager, 
 along with the Prometheus Operator and kube-prometheus projects, can simplify the process. The Operator 
 leverages predefined configurations and dashboards for Prometheus and Grafana, while the Helm 
-prometheus-operator chart facilitates the installation of Prometheus Operator and all other necessary 
-components, resulting in a comprehensive cluster monitoring solution.
+prometheus-operator chart facilitates the installation of Prometheus Operator and all other needed 
+components, resulting in a comprehensive monitoring solution.
 
-First, add the helm repo:
+First, add the Helm repo:
 
 .. code-block:: shell
 
     $ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
     
-Now, search for the available prometheus charts:
+Then, search for available prometheus charts:
 
 .. code-block:: shell
 
     $ helm repo update
     $ helm search repo kube-prometheus
 
-Once you've located which the version of the chart to use, inspect the chart so we can modify the settings:
+After you locate which version of the chart to use, inspect the chart to modify the settings:
 
 .. code-block:: shell
 
     $ helm inspect values prometheus-community/kube-prometheus-stack > /tmp/kube-prometheus-stack.values
 
-Next, we'll need to edit the values file to change the port at which the Prometheus server service is available. 
+Next, edit the values file to change the port on which the Prometheus service is available. 
 In the prometheus instance section of the chart, change the service type from ClusterIP to LoadBalancer. 
-This will allow the Prometheus server to be accessible at external ip address.
+This allows the Prometheus server to be accessible at an external IP address.
 
 .. code-block:: shell
 
@@ -73,7 +73,7 @@ This will allow the Prometheus server to be accessible at external ip address.
       ##
       type: LoadBalancer
 
-Modify the prometheusSpec.serviceMonitorSelectorNilUsesHelmValues settings to false below:
+Set the ``prometheusSpec.serviceMonitorSelectorNilUsesHelmValues`` to ``false`` as below:
 
 .. code-block:: shell
 
@@ -83,7 +83,7 @@ Modify the prometheusSpec.serviceMonitorSelectorNilUsesHelmValues settings to fa
     ##
     serviceMonitorSelectorNilUsesHelmValues: false
 
-You can change the grafana's default login password as follows:
+You can change Grafana's default login password as below:
 
 .. code-block:: shell
 
@@ -93,7 +93,7 @@ You can change the grafana's default login password as follows:
       adminPassword: Grafana1!
 
 
-Add the following configMap to the section on additionalScrapeConfigs in the Helm chart.
+Add the following ConfigMap to the section ``additionalScrapeConfigs`` in the Helm chart.
 
 .. code-block:: shell
 
@@ -123,7 +123,7 @@ Add the following configMap to the section on additionalScrapeConfigs in the Hel
         action: replace
         target_label: kubernetes_node
 
-Finally, we can deploy the Prometheus and Grafana pods using the kube-prometheus-stack via Helm:
+Finally, deploy the Prometheus and Grafana pods using the kube-prometheus-stack via ``helm``:
 
 .. code-block:: shell
 
@@ -147,7 +147,7 @@ You should see a console output as below:
 
     Visit https://github.com/prometheus-operator/kube-prometheus for instructions on how to create & configure Alertmanager and Prometheus instances using the Operator.
 
-Now you can see the Prometheus and Grafana pods, ensure the pods are up and running and the validator pods have been completed.
+Now you can see the Prometheus and Grafana pods, ensure the pods are up and running and the validator pods have completed.
 
 .. code-block:: shell
 
@@ -167,7 +167,7 @@ Patch the Grafana Service
 """""""""""""""""""""""""
 
 You can also launch the Grafana tools for visualizing the GPU metrics. By default, Grafana uses a ClusterIP to expose the ports on which the service is accessible. 
-This can be changed to a LoadBalancer instead, so the page is accessible from the browser, similar to the Prometheus dashboard.
+This can be changed to a LoadBalancer instead, so it is accessible from a browser, similar to the Prometheus dashboard.
 
 .. code-block:: shell 
     
@@ -176,13 +176,13 @@ This can be changed to a LoadBalancer instead, so the page is accessible from th
       type: LoadBalancer
     EOF
 
-And now use kubectl patch:
+And use ``kubectl patchi``:
 
 .. code-block:: shell 
 
     $ kubectl patch svc kube-prometheus-stack-grafana -n prometheus --patch "$(cat grafana-patch.yaml)"
 
-You can verify that the service is now exposed at an externally accessible port:
+You can verify that the service is exposed on an externally accessible port:
 
 .. code-block:: shell 
 
@@ -202,7 +202,7 @@ You can verify that the service is now exposed at an externally accessible port:
 Deploy NVIDIA GPU Operator
 --------------------------
 
-If your cluster have already installed the gpu operator, modify the clusterpolicy to enable the serviceMonitor as follows: 
+If your cluster already installed the GPU operator, modify the ``clusterpolicy`` to enable the ``serviceMonitor`` as below: 
 
 .. code-block:: shell
     
@@ -216,11 +216,12 @@ If your cluster have already installed the gpu operator, modify the clusterpolic
     serviceMonitor:
       enabled: true
     
-If not, you can also use the following script, which automates the GPU Operator installation instructions.
+If the GPU operator is not installed, use the following shell script to automate the GPU Operator installation process.
 
 .. code-block:: shell
     
     #!/bin/bash
+
     dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
     cd "$dir"
     
@@ -274,29 +275,25 @@ If not, you can also use the following script, which automates the GPU Operator 
 Monitor the GPU Resource
 ------------------------
 
-Now, You can observe that the Prometheus server is available at port 9090 on the node's IP address. 
-Open your browser to http://<EXTERNAL-IP>:9090. It may take a few minutes for DCGM to 
-start publishing the metrics to Prometheus. The metrics availability can be verified by 
-typing DCGM_FI_DEV_GPU_UTIL in the event bar to determine if the GPU metrics are visible:
+Now, the Prometheus server is available on port 9090 at the node's IP address. 
+Use your browser to visit http://<EXTERNAL-IP>:9090. It may take a few minutes for NVIDIA Data Center GPU Manager (DCGM) to 
+start publishing the metrics to Prometheus. Type DCGM_FI_DEV_GPU_UTIL in the event bar to check if the GPU metrics are visible:
 
     .. image:: ../_static/prometheus-1.png
 
-Open your browser to http://<EXTERNAL-IP>:80 and view the Grafana login page. Access Grafana home using the 
-`admin` username. The password credentials for the login are available in the prometheus.values file 
-we edited in the earlier section of the doc:
+Use your browser to visit http://<EXTERNAL-IP>:80 to login to Grafana web UI with username 
+``admin``, the password credential is available in the prometheus.values file 
+edited earlier in this section:
     
     .. image:: ../_static/grafana-1.png
 
     .. image:: ../_static/grafana-2.png
 
 
-Troubleshooting
-===============
-
 Delete the Prometheus Chart
 ---------------------------
 
-This removes all the Kubernetes components associated with the prometheus chart and deletes the release.
+To remove all the Kubernetes components associated with the prometheus chart and delete the release.
 
 .. code-block:: shell 
     

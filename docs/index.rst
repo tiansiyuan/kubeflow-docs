@@ -22,7 +22,9 @@ Additionally, vSphere Enterprise Kubeflow incorporates several Kubeflow add-ons 
 
 This documentation presents a comprehensive end-to-end workflow of using vSphere Enterprise Kubeflow to build, train, and deploy machine learning models. It will guide you through the entire process, from data preparation to model serving, and explain how various components of vSphere Enterprise Kubeflow work together to streamline and enhance your machine learning workflow. Furthermore, we will provide our best practices for deploying Kubeflow components locally, on-prem, and in the cloud. By the end of this documentation, you will have a better understanding of how to use vSphere Enterprise Kubeflow to manage your machine learning projects and you'll be able to apply the additional provided features to your projects.
 
+
 .. toctree::
+    :caption: Kubeflow Docs
     :hidden:
 
     introduction/index
