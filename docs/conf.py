@@ -14,7 +14,7 @@ release = '0.1'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["sphinx_immaterial", "sphinx_tabs.tabs"]
+extensions = ["nbsphinx", "sphinx_immaterial", "sphinx_tabs.tabs"]
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
@@ -69,3 +69,23 @@ html_theme_options = {
 
 html_theme = 'sphinx_immaterial'
 html_static_path = ['_static']
+
+# nbsphinx_input_prompt = 'In [%s]:'
+# nbsphinx_output_prompt = 'Out[%s]:'
+
+nbsphinx_prolog = """
+{% set docname = env.doc2path(env.docname, base=None) %}
+.. raw:: html
+
+    <style>
+        .nboutput .container {
+            font-size: .6rem;
+        }
+    </style>
+
+    <div class="admonition note">
+      <p>Notebook Download
+        <a class="reference external" href="https://raw.githubusercontent.com/elements-of-ai/kubeflow-docs/main/docs/{{ docname|e }}">{{ docname|e }}</a>
+      </p>
+    </div>
+"""
