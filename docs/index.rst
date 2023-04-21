@@ -5,8 +5,7 @@
 
 .. image:: ./_static/kubeflow-logo.png
    :align: center
-   :height: 20 %
-   :width: 20 %
+   :scale: 20 %
 
 Welcome
 =======
